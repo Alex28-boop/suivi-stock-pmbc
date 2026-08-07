@@ -77,17 +77,6 @@
    </section>
    <section id="tab-parametres" class="hidden">
     <h2 class="text-lg font-semibold mb-4" style="color: rgb(45, 42, 36);">Paramètres</h2>
-    <!-- Data / Excel storage -->
-    <div class="mb-8 p-4 rounded-lg border" style="background: #fff;">
-     <h3 class="font-medium mb-1" style="color: rgb(61, 58, 52); font-size: 16px;">Données (fichier Excel)</h3>
-     <p class="text-xs mb-3" style="color: rgb(122,112,96);">Cette appli stocke tout dans votre navigateur, mais la source officielle reste votre fichier Excel : exportez-le régulièrement et réimportez-le pour reprendre le travail sur un autre appareil.</p>
-     <div class="flex gap-2 flex-wrap items-center">
-      <button type="button" id="export-btn" onclick="exportAllToExcel()" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium">Exporter toutes les données (Excel)</button>
-      <label for="import-input" class="file-label btn-outline px-4 py-2 rounded-lg text-sm font-medium">Importer un fichier Excel
-       <input type="file" id="import-input" accept=".xlsx,.xls" class="hidden">
-      </label>
-     </div>
-    </div>
     <!-- Items -->
     <div class="mb-8">
      <h3 class="font-medium mb-3" style="color: rgb(61, 58, 52); font-size: 16px;">Articles suivis</h3>
@@ -105,12 +94,23 @@
      <div id="recipients-list" class="space-y-2"></div>
     </div>
     <!-- Categories -->
-    <div>
+    <div class="mb-8">
      <h3 class="font-medium mb-3" style="color: rgb(61, 58, 52); font-size: 16px;">Catégories</h3>
      <form id="add-category-form" class="flex gap-2 mb-3">
       <input id="new-category-input" type="text" placeholder="Nouvelle catégorie" class="flex-1 px-3 py-2 border rounded-lg text-sm"> <button type="submit" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium">Ajouter</button>
      </form>
      <div id="categories-list" class="space-y-2"></div>
+    </div>
+    <!-- Data / Excel storage -->
+    <div class="p-4 rounded-lg border" style="background: #fff;">
+     <h3 class="font-medium mb-1" style="color: rgb(61, 58, 52); font-size: 16px;">Données (fichier Excel)</h3>
+     <p class="text-xs mb-3" style="color: rgb(122,112,96);">Cette appli stocke tout dans votre navigateur, mais la source officielle reste votre fichier Excel : exportez-le régulièrement et réimportez-le pour reprendre le travail sur un autre appareil.</p>
+     <div class="flex gap-2 flex-wrap items-center">
+      <button type="button" id="export-btn" onclick="exportAllToExcel()" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium">Exporter toutes les données (Excel)</button>
+      <label for="import-input" class="file-label btn-outline px-4 py-2 rounded-lg text-sm font-medium">Importer un fichier Excel
+       <input type="file" id="import-input" accept=".xlsx,.xls" class="hidden">
+      </label>
+     </div>
     </div>
    </section>
   </main>
@@ -118,12 +118,34 @@
     const STORAGE_KEY = 'pmbc-stock-data';
     let allData = [];
 
+    const DEFAULT_DATA = {
+      'Boissons': ['San Pellegrino', 'Coca', 'Orangina', 'Ice Tea', 'Cristalline', '1664', 'Heineken'],
+      'Snacks': ['Lion', 'Twix', 'Snickers', 'M&Ms', 'Kitkat', 'Haribo'],
+      'Autres': ['Eponges', 'Sacs Poubelle']
+    };
+
+    function seedDefaultData() {
+      const date = new Date().toISOString();
+      Object.keys(DEFAULT_DATA).forEach(catName => {
+        allData.push({ id: makeId(), type: 'category', name: catName, value: '', date, category: '' });
+      });
+      Object.entries(DEFAULT_DATA).forEach(([catName, items]) => {
+        items.forEach(itemName => {
+          allData.push({ id: makeId(), type: 'item', name: itemName, value: '', date, category: catName });
+        });
+      });
+      saveData();
+    }
+
     function loadData() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         allData = raw ? JSON.parse(raw) : [];
       } catch (e) {
         allData = [];
+      }
+      if (!allData.length) {
+        seedDefaultData();
       }
     }
     function saveData() {
