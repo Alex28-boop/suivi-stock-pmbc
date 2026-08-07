@@ -170,13 +170,25 @@
      <div id="items-list" class="space-y-2"></div>
     </div>
     <!-- Recipients -->
-    <div class="mb-8">
-     <h3 class="font-medium mb-3" style="color: rgb(61, 58, 52); font-size: 16px;">Destinataires email</h3>
-     <form id="add-recipient-form" class="flex gap-2 mb-3">
-      <input id="new-recipient-input" type="email" placeholder="email@exemple.com" class="flex-1 px-3 py-2 border rounded-lg text-sm"> <button type="submit" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium">Ajouter</button>
-     </form>
-     <div id="recipients-list" class="space-y-2"></div>
-    </div>
+   <div class="mt-6">
+  <h2 class="text-lg font-semibold mb-3">Emails</h2>
+  <form id="add-recipient-form" class="flex gap-2 mb-4">
+    <input 
+      id="new-recipient-input"
+      type="email"
+      placeholder="allname.28@gmail.com"
+      class="flex-1 px-3 py-2 border rounded"
+      required
+    >
+    <button 
+      type="submit"
+      class="btn-primary px-4 py-2 rounded">
+      Ajouter
+    </button>
+  </form>
+
+  <div id="recipients-list" class="space-y-2"></div>
+</div>
     <!-- Categories -->
     <div class="mb-8">
      <h3 class="font-medium mb-3" style="color: rgb(61, 58, 52); font-size: 16px;">Catégories</h3>
