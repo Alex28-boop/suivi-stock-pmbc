@@ -241,8 +241,6 @@
     // Sélections "à racheter" non enregistrées, conservées par stock quand on bascule d'onglet
     let pendingRacheter = { PSM: {}, JD: {} };
 
-    const DEFAULT_RECIPIENTS = ['valerievincelot@yahoo.fr', 'allname.28@gmail.com'];
-
     const DEFAULT_DATA = {
       'Boissons': ['San Pellegrino', 'Coca', 'Orangina', 'Ice Tea', 'Cristalline', '1664', 'Heineken', 'Tourtel', 'Oasis Tropical', 'Oasis Framboise', 'Schweppes Agrumes'],
       'Snacks': ['Lion', 'Twix', 'Snickers', 'M&Ms', 'Kitkat', 'Bonbons', 'Bounty', 'Kinder Bueno', 'Mars', 'Sucettes'],
@@ -276,6 +274,7 @@
       }
       migrateBoissonsAnnotation();
     }
+    seedDefaultRecipients();
     // Renseigne "x6" sur les articles de la catégorie Boissons qui n'ont pas encore d'annotation
     // (ne touche jamais une annotation déjà personnalisée par l'utilisateur).
     function migrateBoissonsAnnotation() {
@@ -294,6 +293,21 @@
     function makeId() {
       return (crypto.randomUUID ? crypto.randomUUID() : 'id-' + Date.now() + '-' + Math.random().toString(16).slice(2));
     }
+
+    // Ajoute une seule fois les destinataires par défaut (ils restent supprimables ensuite)
+function seedDefaultRecipients() {
+  if (localStorage.getItem('pmbc-recipients-seeded')) return;
+  const defaults = ['valerievincelot@yahoo.fr', 'allname.28@gmail.com'];
+  const existing = getRecipients().map(r => r.name.trim().toLowerCase());
+  const date = new Date().toISOString();
+  defaults.forEach(email => {
+    if (!existing.includes(email.toLowerCase())) {
+      allData.push({ id: makeId(), type: 'recipient', name: email, value: '', date, category: '' });
+    }
+  });
+  localStorage.setItem('pmbc-recipients-seeded', '1');
+  saveData();
+}
 
     const getItems = () => allData.filter(r => r.type === 'item');
     const getCategories = () => allData.filter(r => r.type === 'category');
@@ -717,15 +731,7 @@
     }
 
     function sendReport() {
-      const seen = new Set();
-const recipients = [...DEFAULT_RECIPIENTS, ...getRecipients().map(r => r.name.trim())]
-  .filter(email => {
-    const key = email.toLowerCase();
-    if (!email || seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  })
-  .join(',');
+      const recipients = getRecipients().map(r => r.name).join(',');
       const items = getItems();
       const itemCatMap = {};
       items.forEach(i => itemCatMap[i.name] = i.category || '');
