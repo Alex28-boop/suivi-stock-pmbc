@@ -197,7 +197,7 @@
     <input 
       id="new-recipient-input"
       type="email"
-      placeholder="allname.28@gmail.com";"valerievincelot@yahoo.fr"
+      placeholder="valerievincelot@yahoo.fr";"anne.braconnier15@gmail.com";
       class="flex-1 px-3 py-2 border rounded"
       required
     >
@@ -274,7 +274,6 @@
       }
       migrateBoissonsAnnotation();
     }
-    seedDefaultRecipients();
     // Renseigne "x6" sur les articles de la catégorie Boissons qui n'ont pas encore d'annotation
     // (ne touche jamais une annotation déjà personnalisée par l'utilisateur).
     function migrateBoissonsAnnotation() {
@@ -293,9 +292,6 @@
     function makeId() {
       return (crypto.randomUUID ? crypto.randomUUID() : 'id-' + Date.now() + '-' + Math.random().toString(16).slice(2));
     }
-  localStorage.setItem('pmbc-recipients-seeded', '1');
-  saveData();
-}
 
     const getItems = () => allData.filter(r => r.type === 'item');
     const getCategories = () => allData.filter(r => r.type === 'category');
