@@ -197,7 +197,7 @@
     <input 
       id="new-recipient-input"
       type="email"
-      placeholder="allname.28@gmail.com"
+      placeholder="allname.28@gmail.com";"valerievincelot@yahoo.fr"
       class="flex-1 px-3 py-2 border rounded"
       required
     >
@@ -293,18 +293,6 @@
     function makeId() {
       return (crypto.randomUUID ? crypto.randomUUID() : 'id-' + Date.now() + '-' + Math.random().toString(16).slice(2));
     }
-
-    // Ajoute une seule fois les destinataires par défaut (ils restent supprimables ensuite)
-function seedDefaultRecipients() {
-  if (localStorage.getItem('pmbc-recipients-seeded')) return;
-  const defaults = ['valerievincelot@yahoo.fr', 'allname.28@gmail.com'];
-  const existing = getRecipients().map(r => r.name.trim().toLowerCase());
-  const date = new Date().toISOString();
-  defaults.forEach(email => {
-    if (!existing.includes(email.toLowerCase())) {
-      allData.push({ id: makeId(), type: 'recipient', name: email, value: '', date, category: '' });
-    }
-  });
   localStorage.setItem('pmbc-recipients-seeded', '1');
   saveData();
 }
