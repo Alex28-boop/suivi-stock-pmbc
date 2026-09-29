@@ -197,8 +197,7 @@
     <input 
       id="new-recipient-input"
       type="email"
-      placeholder="valerievincelot@yahoo.fr";
-      placeholder="anne.braconnier15@gmail.com";
+      placeholder="nom@exemple.com"
       class="flex-1 px-3 py-2 border rounded"
       required
     >
@@ -249,6 +248,8 @@
     };
     // Mode par défaut des catégories créées au premier lancement
     const DEFAULT_MODES = { 'Boissons': 'qty', 'Snacks': 'racheter', 'Autres': 'racheter' };
+    // Destinataires email ajoutés automatiquement au premier lancement (restent supprimables/éditables ensuite)
+    const DEFAULT_RECIPIENTS = ['valerievincelot@yahoo.fr', 'anne.braconnier15@gmail.com'];
 
     function seedDefaultData() {
       const date = new Date().toISOString();
@@ -274,6 +275,7 @@
         seedDefaultData();
       }
       migrateBoissonsAnnotation();
+      seedDefaultRecipients();
     }
     // Renseigne "x6" sur les articles de la catégorie Boissons qui n'ont pas encore d'annotation
     // (ne touche jamais une annotation déjà personnalisée par l'utilisateur).
@@ -286,6 +288,19 @@
         }
       });
       if (changed) saveData();
+    }
+    // Ajoute une seule fois les destinataires par défaut (ils restent modifiables/supprimables ensuite)
+    function seedDefaultRecipients() {
+      if (localStorage.getItem('pmbc-recipients-seeded')) return;
+      const existing = getRecipients().map(r => r.name.trim().toLowerCase());
+      const date = new Date().toISOString();
+      DEFAULT_RECIPIENTS.forEach(email => {
+        if (!existing.includes(email.toLowerCase())) {
+          allData.push({ id: makeId(), type: 'recipient', name: email, value: '', date, category: '' });
+        }
+      });
+      localStorage.setItem('pmbc-recipients-seeded', '1');
+      saveData();
     }
     function saveData() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(allData));
