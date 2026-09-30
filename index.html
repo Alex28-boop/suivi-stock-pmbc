@@ -693,6 +693,15 @@
       saveData();
       renderAll();
       showToast('Stock ' + currentStock + ' enregistré');
+
+      // Demande de confirmation avant d'ouvrir l'email
+      const sendNow = confirm(
+        'État du stock enregistré.\\n\\nVoulez-vous confirmer l\'envoi du rapport par email ?'
+      );
+
+      if (sendNow) {
+        sendReport();
+      }
     }
 
     function buildStockSection(stock, itemCatMap) {
